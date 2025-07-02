@@ -1,0 +1,13 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ${{ values.name }}
+  description: ${{ values.description | dump }}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: ${{ values.project_slug }}
+spec:
+  owner: ${{ values.owner | dump }}
+  {%- if values.catalog_domain %}
+  domain: ${{ values.catalog_domain | dump }}
+  {%- endif %}

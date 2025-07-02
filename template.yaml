@@ -1,0 +1,102 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: ons-pipeline-template
+  title: Create Pipeline
+  description: Create a new Pipeline
+  tags:
+    - pipeline
+spec:
+  owner: group:unknown
+  type: system
+
+  parameters:
+    - title: Pipeline Info
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: The unique name of this pipeline
+          ui:field: EntityNamePicker
+        description:
+          title: Description
+          type: string
+          description: Description of this pipeline
+        owner:
+          title: Owner
+          type: string
+          description: Owner of this pipeline
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              - kind: Group
+        catalog_domain:
+          title: Domain
+          type: string
+          description: Which domain is this connected to?
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              - kind: Domain
+
+    - title: Repository Info
+      required:
+        - repository_owner
+        - repository_visibility
+      properties:
+        repository_owner:
+          title: Repo Organization
+          type: string
+          description: What is the organization for your repository? (e.g. your GitHub username)
+          default: ONS-Innovation
+        repository_visibility:
+          title: Repo Visibility
+          type: string
+          description: What is your repository visibility?
+          default: public
+          enum:
+            - public
+            - internal
+            - private
+
+  steps:
+    - id: fetch
+      name: Fetch Skeleton
+      action: fetch:template
+      input:
+        url: ./project_template
+        templateFileExtension: true
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          catalog_domain: ${{ parameters.catalog_domain }}
+          project_slug: ${{parameters.repository_owner }}/${{ parameters.name }}
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        repoUrl: github.com?owner=${{parameters.repository_owner }}&repo=${{ parameters.name }}
+        description: ${{ parameters.description }}
+        repoVisibility: ${{ parameters.repository_visibility }}
+        defaultBranch: main
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
