@@ -6,17 +6,16 @@ metadata:
   annotations:
     backstage.io/techdocs-ref: dir:.
     github.com/project-slug: ${{ values.project_slug }}
-    github.com/project-slug: ${{ values.project_slug }}
   links:
     - url: https://codespaces.new/${{ values.repository_owner }}/${{ values.repository_name }}
-    title: Open Development Environment 
-    icon: scaffolder
+      title: Open Development Environment 
+      icon: scaffolder
     - url: https://officenationalstatistics.sharepoint.com/sites/ONS_DDaT_Communities/SitePages/SE%20-%20Principles,%20Policies,%20Guidelines%20&%20more.aspx?csf=1&web=1&share=EQI8qpmdcZ1MvVA__6yKAtgBkWCMhU-pty-SBeAs1KVAEQ&e=jlgchY
-    title: Policies & Guidelines  
-    icon: catalog
+      title: Policies & Guidelines  
+      icon: catalog
     - url: https://app.pluralsight.com/channels/details/c4f16af4-8278-440c-9ae8-fc9e95f1f34d
-    title: Learning Pathway  
-    icon: help
+      title: Learning Pathway  
+      icon: help
 spec:
   owner: ${{ values.owner | dump }}
   {%- if values.catalog_domain %}
